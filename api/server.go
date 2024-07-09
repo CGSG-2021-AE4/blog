@@ -2,10 +2,13 @@ package api
 
 import (
 	"context"
+	"crypto/tls"
 	"errors"
 	"log"
 	"net/http"
 	"webapp/api/router"
+	"webapp/pgk/cg"
+	"webapp/pgk/cg/sscg"
 
 	"github.com/gin-gonic/gin"
 )
@@ -13,8 +16,10 @@ import (
 // TODO
 
 type ApiServer struct {
-	Addr   string
-	Router router.Router
+	Addr            string
+	Router          router.Router
+	CertFilename    string
+	PrivKeyFilename string
 
 	stopCtx    context.CancelFunc
 	httpServer http.Server
@@ -22,6 +27,15 @@ type ApiServer struct {
 
 func (s *ApiServer) Start(ctx context.Context) error {
 	ctx, s.stopCtx = context.WithCancel(ctx)
+
+	// Check certificate and private key
+	if err := cg.CheckCert(s.CertFilename); err != nil {
+		log.Println("Certificate is invalid")
+		log.Println("Regenerate certificate...")
+		if err := sscg.Gen(s.CertFilename, s.PrivKeyFilename); err != nil {
+			return err
+		}
+	}
 
 	rt := gin.New()
 
@@ -34,7 +48,14 @@ func (s *ApiServer) Start(ctx context.Context) error {
 		rt.Handle(r.Method, r.Path, r.Handler)
 	}
 
-	s.httpServer = http.Server{Addr: s.Addr, Handler: rt}
+	s.httpServer = http.Server{
+		Addr:    s.Addr,
+		Handler: rt,
+		TLSConfig: &tls.Config{
+			MinVersion:               tls.VersionTLS13,
+			PreferServerCipherSuites: true,
+		},
+	}
 
 	// Handle context done
 	go func() {
@@ -44,7 +65,7 @@ func (s *ApiServer) Start(ctx context.Context) error {
 		}
 	}()
 
-	if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	if err := s.httpServer.ListenAndServeTLS(s.CertFilename, s.PrivKeyFilename); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 	return nil

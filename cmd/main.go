@@ -38,9 +38,12 @@ func mainRun(ctx context.Context, conf Config) error {
 
 	// Create server
 	server := api.ApiServer{
-		Addr:   conf.Domain,
-		Router: routers,
+		Addr:            conf.Domain,
+		Router:          routers,
+		CertFilename:    conf.CertFilename,
+		PrivKeyFilename: conf.PrivKeyFilename,
 	}
+
 	// Run server
 	return server.Start(ctx)
 }
