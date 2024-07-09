@@ -1,0 +1,57 @@
+@import url("./colors.css");
+
+:root {
+  font-family: "Roboto Mono", "Roboto Mono", "Vazirmatn", monospace;
+  --header-height: 3em;
+}
+/* DEBUG * /
+* {
+  outline: 1px dashed red;
+}
+
+html {
+  background-color: black;
+}
+/**/
+
+* {
+  color: var(--main-color)
+}
+
+p {
+  font-size: 1.2em;
+  margin-block: 0.1em; 
+}
+
+div.padding {
+  padding-left: 2em;
+}
+
+
+body {
+  margin-block: 0;
+  margin-inline: auto;
+  padding-block: 2em;
+  padding-inline: 2em;
+  max-width: 90em;
+  display: flex;
+  flex-direction: column;
+  
+  background-color: var(--body-bg-color);
+}
+
+
+header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  
+  margin: 1em;
+  margin-bottom: 3.5em;
+
+}
+
+img#logo {
+  height: var(--header-height)
+}

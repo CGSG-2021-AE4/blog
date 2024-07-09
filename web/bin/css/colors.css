@@ -1,0 +1,7 @@
+:root {
+  --bg-color: rgb(22, 0, 56);
+  --main-color: rgb(176, 219, 245);
+  --hightlight-color: rgb(79, 214, 101);
+
+  --body-bg-color: var(--bg-color);
+}
