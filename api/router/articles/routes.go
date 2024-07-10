@@ -2,12 +2,15 @@ package articles
 
 import (
 	"net/http"
-	"webapp/api"
+
+	"github.com/CGSG-2021-AE4/blog/api"
 
 	"github.com/gin-gonic/gin"
 )
 
 func mainPageHandler(domain string, svc api.ArticlesService, userSvc api.UserService) gin.HandlerFunc {
+	_ = svc
+	_ = userSvc
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "main.html", gin.H{
 			"Domain": domain,

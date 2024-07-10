@@ -14,23 +14,6 @@ type User struct {
 	Password string    `json:"password"`
 }
 
-type UserStoreReader interface {
-	GetUser(ctx context.Context, id uuid.UUID) (*User, error)
-	GetUserByName(ctx context.Context, username string) (*User, error)
-	DoExist(ctx context.Context, username string) (bool, error) // Is needed for registration
-}
-
-type UserStoreWriter interface {
-	CreateUser(ctx context.Context, user *User) error
-	DeleteUser(ctx context.Context, Id uuid.UUID) error
-}
-
-type UserStore interface {
-	UserStoreReader
-	UserStoreWriter
-	io.Closer
-}
-
 type TokenClaims struct {
 	Issuer         string // "iss"
 	ExpirationTime int64  // "exp"

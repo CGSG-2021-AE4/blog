@@ -6,17 +6,16 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-	"webapp/api"
-	"webapp/api/router"
-	"webapp/api/router/articles"
-	"webapp/api/router/midleware"
-	"webapp/api/router/users"
-	"webapp/internal/app"
-	"webapp/internal/db"
-	"webapp/internal/db/json"
+
+	"github.com/CGSG-2021-AE4/blog/api"
+	"github.com/CGSG-2021-AE4/blog/api/router"
+	"github.com/CGSG-2021-AE4/blog/api/router/articles"
+	"github.com/CGSG-2021-AE4/blog/api/router/midleware"
+	"github.com/CGSG-2021-AE4/blog/api/router/users"
+	"github.com/CGSG-2021-AE4/blog/internal/app"
+	"github.com/CGSG-2021-AE4/blog/internal/db/json"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func main() {
@@ -45,20 +44,6 @@ func mainRun(ctx context.Context, conf Config) error {
 	}
 	articleStore, err := json.NewArticleStore(conf.ArticleStoreFilename)
 	if err != nil {
-		return err
-	}
-
-	// Testing
-	a := db.Article{
-		Header: db.ArticleHeader{
-			Id:    uuid.New(),
-			Title: "Test title",
-		},
-		Content: &db.ArticleContent{
-			Text: "Bla bla bla bla",
-		},
-	}
-	if err := articleStore.CreateArticle(ctx, &a); err != nil {
 		return err
 	}
 
@@ -108,6 +93,23 @@ func mainRun(ctx context.Context, conf Config) error {
 }
 
 /* Registration testing * /
+
+
+a := db.Article{
+		Header: db.ArticleHeader{
+			Id:    uuid.New(),
+			Title: "Test title",
+		},
+		Content: &db.ArticleContent{
+			Text: "Bla bla bla bla",
+		},
+	}
+	if err := articleStore.CreateArticle(ctx, &a); err != nil {
+		return err
+	}
+
+
+
 u := api.User{
 	Id:       uuid.New(),
 	Username: "yotia",

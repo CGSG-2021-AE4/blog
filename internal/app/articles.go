@@ -1,6 +1,6 @@
 package app
 
-import "webapp/api"
+import "github.com/CGSG-2021-AE4/blog/api"
 
 type ArticlesService struct {
 	Domain string

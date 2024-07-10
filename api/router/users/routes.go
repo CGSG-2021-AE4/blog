@@ -5,7 +5,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"webapp/api"
+
+	"github.com/CGSG-2021-AE4/blog/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"

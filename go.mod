@@ -1,4 +1,4 @@
-module webapp
+module github.com/CGSG-2021-AE4/blog
 
 go 1.22.5
 

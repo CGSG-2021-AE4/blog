@@ -5,7 +5,8 @@ import (
 	"encoding/json"
 	"os"
 	"sync"
-	"webapp/internal/db"
+
+	"github.com/CGSG-2021-AE4/blog/internal/db"
 
 	"github.com/google/uuid"
 )

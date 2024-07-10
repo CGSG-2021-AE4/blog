@@ -3,8 +3,9 @@ package app
 import (
 	"context"
 	"time"
-	"webapp/api"
-	"webapp/internal/db"
+
+	"github.com/CGSG-2021-AE4/blog/api"
+	"github.com/CGSG-2021-AE4/blog/internal/db"
 
 	"github.com/golang-jwt/jwt/v5"
 )

@@ -6,9 +6,10 @@ import (
 	"errors"
 	"log"
 	"net/http"
-	"webapp/api/router"
-	"webapp/pgk/cg"
-	"webapp/pgk/cg/sscg"
+
+	"github.com/CGSG-2021-AE4/blog/api/router"
+	"github.com/CGSG-2021-AE4/blog/pkg/cg"
+	"github.com/CGSG-2021-AE4/blog/pkg/cg/sscg"
 
 	"github.com/gin-gonic/gin"
 )

@@ -3,7 +3,8 @@ package db
 import (
 	"context"
 	"io"
-	"webapp/api"
+
+	"github.com/CGSG-2021-AE4/blog/api"
 
 	"github.com/google/uuid"
 )
