@@ -16,7 +16,7 @@ import (
 // TODO
 
 type ApiServer struct {
-	Addr            string
+	Addr            string // Domain addr
 	Router          router.Router
 	CertFilename    string
 	PrivKeyFilename string

@@ -5,10 +5,12 @@ import (
 	"log"
 	"os/signal"
 	"syscall"
+	"time"
 	"webapp/api"
 	"webapp/api/router"
 	"webapp/api/router/articles"
 	"webapp/internal/app"
+	"webapp/internal/db/json"
 )
 
 func main() {
@@ -30,10 +32,18 @@ func main() {
 func mainRun(ctx context.Context, conf Config) error {
 	// Get router from services
 
-	articlesSvc := app.NewArticlesService()
+	// Create stores
+	userStore, err := json.NewUserStore(conf.UserStoreFilename)
+	if err != nil {
+		return err
+	}
+
+	// Create services
+	articlesSvc := app.NewArticlesService(conf.Domain)
+	userSvc := app.NewUserService(conf.UserSvcSecret, time.Duration(conf.UserTokenExpTimeout), userStore)
 
 	routers := router.Routers{Rs: []router.Router{
-		articles.NewRouter(articlesSvc),
+		articles.NewRouter(conf.Domain, articlesSvc, userSvc),
 	}}
 
 	// Create server
@@ -44,6 +54,41 @@ func mainRun(ctx context.Context, conf Config) error {
 		PrivKeyFilename: conf.PrivKeyFilename,
 	}
 
+	/* Registration testing * /
+	u := api.User{
+		Id:       uuid.New(),
+		Username: "yotia",
+		Password: "cgsgforever",
+		Email:    "what@the.fuck",
+	}
+	if err := userSvc.Register(ctx, &u); err != nil {
+		return err
+	}
+	token, err := userSvc.Login(ctx, "yotia", "cgsgforever")
+	if err != nil {
+		return err
+	}
+	claims, err := userSvc.ValidateToken(ctx, token)
+	if err != nil {
+		return err
+	}
+	log.Println(claims)
+	/**/
+
 	// Run server
-	return server.Start(ctx)
+	if err := server.Start(ctx); err != nil {
+		return nil
+	}
+
+	// Closing
+	if err := userSvc.Close(); err != nil {
+		return err
+	}
+	if err := articlesSvc.Close(); err != nil {
+		return err
+	}
+	if err := userStore.Close(); err != nil {
+		return err
+	}
+	return nil
 }

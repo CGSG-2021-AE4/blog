@@ -3,10 +3,13 @@ package app
 import "webapp/api"
 
 type ArticlesService struct {
+	Domain string
 }
 
-func NewArticlesService() *ArticlesService {
-	return &ArticlesService{}
+func NewArticlesService(domain string) *ArticlesService {
+	return &ArticlesService{
+		Domain: domain,
+	}
 }
 
 func (svc *ArticlesService) ListArticles() []api.Article {
@@ -15,4 +18,8 @@ func (svc *ArticlesService) ListArticles() []api.Article {
 		{Title: "Second", Context: nil},
 		{Title: "Third", Context: nil},
 	}
+}
+
+func (svc *ArticlesService) Close() error {
+	return nil
 }

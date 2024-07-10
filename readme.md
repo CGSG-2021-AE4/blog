@@ -42,4 +42,9 @@ web/
 
 ### Build
 go build -o ./out/blog.exe ./cmd/main.go
+
 ./out/blog.exe
+
+
+### Potencial problems and TODOs
+Make ability to check if this username is valid

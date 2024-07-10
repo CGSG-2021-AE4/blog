@@ -2,22 +2,26 @@ package articles
 
 import (
 	"net/http"
+	"webapp/api"
 	"webapp/api/router"
-	"webapp/internal/app"
 )
 
 type ArticlesRouter struct {
-	svc *app.ArticlesService
+	domain  string
+	svc     api.ArticlesService
+	userSvc api.UserService
 }
 
-func NewRouter(svc *app.ArticlesService) router.Router {
+func NewRouter(domain string, svc api.ArticlesService, userSvc api.UserService) router.Router {
 	return &ArticlesRouter{
-		svc: svc,
+		domain:  domain,
+		svc:     svc,
+		userSvc: userSvc,
 	}
 }
 
 func (ar *ArticlesRouter) Routes() []router.Route {
 	return []router.Route{
-		{Method: http.MethodGet, Path: "/", Handler: MainPageHandler(ar.svc)},
+		{Method: http.MethodGet, Path: "/", Handler: MainPageHandler(ar.domain, ar.svc, ar.userSvc)},
 	}
 }

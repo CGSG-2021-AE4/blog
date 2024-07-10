@@ -18,3 +18,12 @@ func RunAndLog(f func() error, name string) {
 		log.Println("Finish", name)
 	}
 }
+
+// Some common errors
+const (
+	ErrNotImplementedYet = Error("not implemented yet")
+
+	// Users errors - primary for further checks
+	ErrUserNotExists     = Error("user not exists")
+	ErrUserAlreadyExists = Error("user already exists")
+)

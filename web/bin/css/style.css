@@ -3,10 +3,12 @@
 :root {
   font-family: "Roboto Mono", "Roboto Mono", "Vazirmatn", monospace;
   --header-height: 3em;
+  --body-width: 60em;
+  --vertical-gap: 3.5em;
 }
 /* DEBUG * /
 * {
-  outline: 1px dashed red;
+  outline: 1px dashed green;
 }
 
 html {
@@ -33,7 +35,7 @@ body {
   margin-inline: auto;
   padding-block: 2em;
   padding-inline: 2em;
-  max-width: 90em;
+  max-width: var(--body-width);
   display: flex;
   flex-direction: column;
   
@@ -48,8 +50,18 @@ header {
   align-items: center;
   
   margin: 1em;
-  margin-bottom: 3.5em;
+  margin-bottom: var(--vertical-gap);
 
+}
+
+footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  margin-top: var(--vertical-gap);
+  margin-inline: 4em;
 }
 
 img#logo {

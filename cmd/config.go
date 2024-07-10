@@ -1,19 +1,30 @@
 package main
 
-import "flag"
+import (
+	"flag"
+	"time"
+)
 
 type Config struct {
-	Domain          string `json:"domain"`
+	Domain string `json:"domain"`
+
 	CertFilename    string `json:"certFilename"`
 	PrivKeyFilename string `json:"privKeyFilename"`
+
+	UserStoreFilename   string `json:"userStoreFilename"`
+	UserSvcSecret       string `json:"usersSecret"`
+	UserTokenExpTimeout int64  `json:"userTokenExpTimeout"`
 }
 
 func NewConfigFromFlags() Config {
 	var config Config
 
 	flag.StringVar(&config.Domain, "domain", "localhost:8080", "Domain address")
-	flag.StringVar(&config.CertFilename, "cert-file", "cert.pem", "Certification filename")
-	flag.StringVar(&config.PrivKeyFilename, "key-file", "key.pem", "Private key filename")
+	flag.StringVar(&config.CertFilename, "cert-file", "out/cert.pem", "Certification filename")
+	flag.StringVar(&config.PrivKeyFilename, "key-file", "out/key.pem", "Private key filename")
+	flag.StringVar(&config.UserStoreFilename, "users-file", "out/user_store.json", "User store filename")
+	flag.StringVar(&config.UserSvcSecret, "secret", "cgsgforever", "User service hmac secret for tokens signing")
+	flag.Int64Var(&config.UserTokenExpTimeout, "token-exp-timeout", int64(3*time.Hour), "User token expiration timeout")
 	flag.Parse()
 
 	return config

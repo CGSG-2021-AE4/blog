@@ -1,5 +1,7 @@
 package api
 
+import "io"
+
 type ArticleContent struct {
 	Text string // Long string so I will store content as pointer
 }
@@ -11,4 +13,5 @@ type Article struct {
 
 type ArticlesService interface {
 	ListArticles() []Article
+	io.Closer
 }
