@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func MainPageHandler(domain string, svc api.ArticlesService, userSvc api.UserService) gin.HandlerFunc {
+func mainPageHandler(domain string, svc api.ArticlesService, userSvc api.UserService) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "main.html", gin.H{
 			"Domain": domain,

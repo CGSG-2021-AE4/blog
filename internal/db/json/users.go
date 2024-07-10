@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"os"
 	"sync"
-	"webapp/api"
+	"webapp/internal/db"
 
 	"github.com/google/uuid"
 )
@@ -14,11 +14,11 @@ type UserStore struct {
 	filename string
 
 	mutex sync.Mutex
-	users map[uuid.UUID]*api.User
+	users map[uuid.UUID]*db.User
 }
 
 func NewUserStore(filename string) (*UserStore, error) {
-	us := UserStore{filename: filename, users: make(map[uuid.UUID]*api.User)}
+	us := UserStore{filename: filename, users: make(map[uuid.UUID]*db.User)}
 	if err := us.load(); err != nil {
 		return nil, err
 	}
@@ -33,7 +33,7 @@ func (us *UserStore) load() error {
 	if err != nil {
 		return err
 	}
-	users := []api.User{}
+	users := []db.User{}
 	if err := json.Unmarshal(bytes, &users); err != nil {
 		return nil
 	}
@@ -47,7 +47,7 @@ func (us *UserStore) save() error {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 
-	users := []api.User{}
+	users := []db.User{}
 	for _, u := range us.users {
 		users = append(users, *u)
 	}
@@ -58,15 +58,14 @@ func (us *UserStore) save() error {
 	return os.WriteFile(us.filename, bytes, 0777)
 }
 
-func (us *UserStore) GetUser(ctx context.Context, id uuid.UUID) (*api.User, error) {
+func (us *UserStore) GetUser(ctx context.Context, id uuid.UUID) (*db.User, error) {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 
-	u := us.users[id]
-	if u == nil {
-		return nil, api.ErrUserNotExists
+	if u := us.users[id]; u != nil {
+		return u, nil
 	}
-	return u, nil
+	return nil, db.ErrUserNotExists
 }
 
 func (us *UserStore) DoExist(ctx context.Context, username string) (bool, error) {
@@ -77,7 +76,7 @@ func (us *UserStore) DoExist(ctx context.Context, username string) (bool, error)
 	return true, nil
 }
 
-func (us *UserStore) GetUserByName(ctx context.Context, username string) (*api.User, error) {
+func (us *UserStore) GetUserByName(ctx context.Context, username string) (*db.User, error) {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 
@@ -86,10 +85,10 @@ func (us *UserStore) GetUserByName(ctx context.Context, username string) (*api.U
 			return us.users[id], nil
 		}
 	}
-	return nil, api.ErrUserNotExists
+	return nil, db.ErrUserNotExists
 }
 
-func (us *UserStore) CreateUser(ctx context.Context, user *api.User) error {
+func (us *UserStore) CreateUser(ctx context.Context, user *db.User) error {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 
@@ -103,7 +102,7 @@ func (us *UserStore) DeleteUser(ctx context.Context, Id uuid.UUID) error {
 	defer us.mutex.Unlock()
 
 	if us.users[Id] == nil {
-		return api.ErrUserNotExists
+		return db.ErrUserNotExists
 	}
 	delete(us.users, Id)
 	return nil

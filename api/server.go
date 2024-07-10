@@ -17,6 +17,7 @@ import (
 
 type ApiServer struct {
 	Addr            string // Domain addr
+	Midleware       []gin.HandlerFunc
 	Router          router.Router
 	CertFilename    string
 	PrivKeyFilename string
@@ -43,6 +44,10 @@ func (s *ApiServer) Start(ctx context.Context) error {
 	rt.Delims("{", "}")
 	rt.Static("bin/", "./web/bin")
 	rt.LoadHTMLFiles("./web/templates/main.html")
+
+	for _, f := range s.Midleware {
+		rt.Use(f)
+	}
 
 	for _, r := range s.Router.Routes() {
 		rt.Handle(r.Method, r.Path, r.Handler)

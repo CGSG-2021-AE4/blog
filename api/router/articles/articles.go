@@ -22,6 +22,6 @@ func NewRouter(domain string, svc api.ArticlesService, userSvc api.UserService) 
 
 func (ar *ArticlesRouter) Routes() []router.Route {
 	return []router.Route{
-		{Method: http.MethodGet, Path: "/", Handler: MainPageHandler(ar.domain, ar.svc, ar.userSvc)},
+		{Method: http.MethodGet, Path: "/", Handler: mainPageHandler(ar.domain, ar.svc, ar.userSvc)},
 	}
 }

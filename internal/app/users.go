@@ -4,17 +4,18 @@ import (
 	"context"
 	"time"
 	"webapp/api"
+	"webapp/internal/db"
 
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type UserService struct {
-	userStore       api.UserStore
+	userStore       db.UserStore
 	tokenSecret     string
 	tokenExpTimeout time.Duration
 }
 
-func NewUserService(tokenSecret string, tokenExpTimeout time.Duration, userStore api.UserStore) *UserService {
+func NewUserService(tokenSecret string, tokenExpTimeout time.Duration, userStore db.UserStore) *UserService {
 	return &UserService{
 		userStore:       userStore,
 		tokenSecret:     tokenSecret,
@@ -83,9 +84,10 @@ func (us *UserService) Register(ctx context.Context, user *api.User) error {
 		if err != nil {
 			return err
 		}
-		return api.ErrUserAlreadyExists
+		return db.ErrUserAlreadyExists
 	}
-	if err := us.userStore.CreateUser(ctx, user); err != nil {
+	u := db.User(*user)
+	if err := us.userStore.CreateUser(ctx, &u); err != nil {
 		return err
 	}
 	return nil
