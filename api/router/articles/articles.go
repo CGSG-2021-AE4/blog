@@ -22,7 +22,9 @@ func NewRouter(svc api.ArticlesService, userSvc api.UserService) router.Router {
 func (ar *ArticlesRouter) Routes() []router.Route {
 	return []router.Route{
 		{Method: http.MethodGet, Path: "/", Handler: router.ScriptPageHandler("index")},
+		{Method: http.MethodGet, Path: "/article", Handler: router.ScriptPageHandler("article")},
 
+		{Method: http.MethodGet, Path: "/api/article", Handler: getArticleHandler(ar.svc)},
 		{Method: http.MethodGet, Path: "/api/article/list", Handler: listArticlesHandler(ar.svc)},
 	}
 }

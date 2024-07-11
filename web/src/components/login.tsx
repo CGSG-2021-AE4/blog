@@ -64,7 +64,9 @@ export default function LoginForm() {
       </div>
       <input onSubmit={HandleSubmit} type="submit" style={{
         marginTop: "2em",
+        marginBottom: "0.5em",
       }} value="Login" />
+      <div style={{display: "flex", justifyContent: "center"}}><div><a href="/signup">Signup</a> for new users</div></div>
     </form>
   );
 }
