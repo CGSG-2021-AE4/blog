@@ -15,4 +15,5 @@ function buildPage(page) {
 
 buildPage("index")
 buildPage("login")
+buildPage("signup")
 buildPage("account")

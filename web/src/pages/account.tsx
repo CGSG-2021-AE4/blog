@@ -4,6 +4,7 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 import LoginForm from "../components/login";
 import * as Auth from "../auth";
+import * as Notifications from "../components/notification";
 
 const infoRowStyle: React.CSSProperties = {
   display: "flex",
@@ -25,11 +26,34 @@ function LogoutHandler() {
   window.location.href = "/"; // Redirect
 }
 
+class deleteReq {
+  id: string
+}
+
+async function DeleteHandler( id: string ) {
+  const resp = await fetch("/api/user/delete", {
+    method: "POST",
+    headers: {
+      "Authorization": "Bearer " + Auth.GetToken()
+    },
+    body: JSON.stringify({
+      id: id,
+    } as deleteReq),
+  });
+  const res = await resp.json();
+  if (res.err != undefined) {
+    // Got error
+    Notifications.Push({type: "error", msg: "Error: " + res.err});
+    return;
+  }
+  Notifications.Push({type: "ok", msg: res.msg});
+}
+
 function AccountInfo() {
   let [user, setUser] = useState<UserInfo>({} as UserInfo)
 
   useEffect(() => {
-    fetch("/getUser", {
+    fetch("/api/user/get", {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + Auth.GetToken()
@@ -68,7 +92,12 @@ function AccountInfo() {
       </div>
       <input onClick={LogoutHandler} type="button" style={{
         marginTop: "2em",
-      }} value="Logout" />
+      }} value="Logout" /><br/>
+      <input onClick={() => {
+        DeleteHandler(user.id);
+      }} type="button" style={{
+        marginTop: "2em",
+      }} value="Delete account" />
     </div>
   </>);
 }

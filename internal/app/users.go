@@ -95,6 +95,10 @@ func (us *UserService) Register(ctx context.Context, user *types.User) error {
 	return nil
 }
 
+func (us *UserService) Delete(ctx context.Context, id uuid.UUID) error {
+	return api.ErrNotImplementedYet
+}
+
 func (svc *UserService) GetUser(ctx context.Context, id uuid.UUID) (*types.User, error) {
 	u, err := svc.userStore.GetUser(ctx, id)
 	return u, err

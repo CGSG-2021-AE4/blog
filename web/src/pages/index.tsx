@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import { useEffect } from "react";
+import * as Notifications from "../components/notification";
 
 class articleHeader {
   id: string
@@ -41,7 +42,7 @@ function Articles() {
 
   useEffect(()=>{
     let fetchArticles = async () => {
-      let resp = await fetch("/listArticles");
+      let resp = await fetch("/api/article/list");
       let res = await resp.json();
       if (res.err != undefined) {
         // Got error

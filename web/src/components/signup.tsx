@@ -1,39 +1,45 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import * as Auth from "../auth";
-import * as Notifications from "../components/notification";
+import * as Notifications from "./notification";
 
-class loginReq {
+class signinReq {
   username: string;
+  email:    string;
   password: string;
 }
 
-class loginResp {
-  token: string;
+class signinResp {
   msg: string;
 }
 
 async function HandleSubmit(e) {
   e.preventDefault();
-  let username = (document.getElementById("username")! as HTMLInputElement).value;
-  let password = (document.getElementById("password")! as HTMLInputElement).value;
-  const resp = await fetch("/api/user/login", {
+
+  let username =     (document.getElementById("username")!     as HTMLInputElement).value;
+  let email    =     (document.getElementById("email")!        as HTMLInputElement).value;
+  let password =     (document.getElementById("password")!     as HTMLInputElement).value;
+  let passwordConf = (document.getElementById("passwordConf")! as HTMLInputElement).value;
+
+  if (password != passwordConf) {
+    Notifications.Push({type: "error", msg: "Error: passwords do not match"})
+  }
+  
+  const resp = await fetch("/api/user/reg", {
     method: "POST",
-    body: JSON.stringify({username: username, password: password} as loginReq),
+    body: JSON.stringify({
+      username: username,
+      email: email,
+      password: password,
+    } as signinReq),
   });
   const res = await resp.json();
   if (res.err != undefined) {
     // Got error
     Notifications.Push({type: "error", msg: "Error: " + res.err});
-    (document.getElementById("username")! as HTMLInputElement).value = "";
-    (document.getElementById("password")! as HTMLInputElement).value = "";
     return;
   }
-
-  Auth.Login(username, res.token);
-  Notifications.Push({type: "ok", msg: "Login complete"});
-  (document.getElementById("username")! as HTMLInputElement).value = "";
-  (document.getElementById("password")! as HTMLInputElement).value = "";
+  Notifications.Push({type: "ok", msg: res.msg});
   setTimeout(() => {
     window.location.href = "/"; // Redirect
   }, 1000);
@@ -54,17 +60,23 @@ export default function LoginForm() {
       padding: "1.5em",
       border: "1px solid var(--main-color)",
       borderRadius: "1em",
-      minWidth: "18em",
+      minWidth: "20em",
     }}>
       <div style={labelDivStyle}>
         <label htmlFor="username">Username:</label><input id="username" name="username" type="text"/>
       </div>
       <div style={labelDivStyle}>
+        <label htmlFor="email">Email:</label><input id="email" name="email" type="text"/>
+      </div>
+      <div style={labelDivStyle}>
         <label htmlFor="password">Password:</label><input id="password" name="password" type="text"/>
+      </div>
+      <div style={labelDivStyle}>
+        <label htmlFor="passwordConf">Confirm password:</label><input id="passwordConf" name="passwordConf" type="text"/>
       </div>
       <input onSubmit={HandleSubmit} type="submit" style={{
         marginTop: "2em",
-      }} value="Login" />
+      }} value="Sign up" />
     </form>
   );
 }

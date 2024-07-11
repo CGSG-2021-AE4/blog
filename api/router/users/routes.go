@@ -101,3 +101,29 @@ func getUserInfoHandler(us api.UserService) gin.HandlerFunc {
 		c.JSON(http.StatusOK, u)
 	}
 }
+
+type deleteUserReq struct {
+	Id uuid.UUID `json:"id"`
+}
+
+func deleteHandler(us api.UserService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		log.Println("delete user")
+		if c.Keys["authorized"] != "true" {
+			log.Println("Not authorized error", c.Keys["authErr"])
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: "not authorized"})
+			return
+		}
+		var info deleteUserReq
+		if err := json.NewDecoder(c.Request.Body).Decode(&info); err != nil {
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: err.Error()})
+			return
+		}
+		err := us.Delete(c, info.Id)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, "User successfully deleted")
+	}
+}

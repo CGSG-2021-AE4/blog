@@ -23,6 +23,6 @@ func (ar *ArticlesRouter) Routes() []router.Route {
 	return []router.Route{
 		{Method: http.MethodGet, Path: "/", Handler: router.ScriptPageHandler("index")},
 
-		{Method: http.MethodGet, Path: "/listArticles", Handler: listArticlesHandler(ar.svc)},
+		{Method: http.MethodGet, Path: "/api/article/list", Handler: listArticlesHandler(ar.svc)},
 	}
 }
