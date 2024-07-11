@@ -8,14 +8,12 @@ import (
 )
 
 type ArticlesRouter struct {
-	domain  string
 	svc     api.ArticlesService
 	userSvc api.UserService
 }
 
-func NewRouter(domain string, svc api.ArticlesService, userSvc api.UserService) router.Router {
+func NewRouter(svc api.ArticlesService, userSvc api.UserService) router.Router {
 	return &ArticlesRouter{
-		domain:  domain,
 		svc:     svc,
 		userSvc: userSvc,
 	}
@@ -23,6 +21,8 @@ func NewRouter(domain string, svc api.ArticlesService, userSvc api.UserService) 
 
 func (ar *ArticlesRouter) Routes() []router.Route {
 	return []router.Route{
-		{Method: http.MethodGet, Path: "/", Handler: mainPageHandler(ar.domain, ar.svc, ar.userSvc)},
+		{Method: http.MethodGet, Path: "/", Handler: router.ScriptPageHandler("index")},
+
+		{Method: http.MethodGet, Path: "/listArticles", Handler: listArticlesHandler(ar.svc)},
 	}
 }

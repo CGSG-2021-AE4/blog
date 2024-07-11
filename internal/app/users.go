@@ -6,6 +6,8 @@ import (
 
 	"github.com/CGSG-2021-AE4/blog/api"
 	"github.com/CGSG-2021-AE4/blog/internal/db"
+	"github.com/CGSG-2021-AE4/blog/internal/types"
+	"github.com/google/uuid"
 
 	"github.com/golang-jwt/jwt/v5"
 )
@@ -80,18 +82,26 @@ func (us *UserService) ValidateToken(ctx context.Context, token api.Token) (api.
 	return api.TokenClaims{}, api.Error("token expired")
 }
 
-func (us *UserService) Register(ctx context.Context, user *api.User) error {
+func (us *UserService) Register(ctx context.Context, user *types.User) error {
 	if exist, err := us.userStore.DoExist(ctx, user.Username); err != nil || exist {
 		if err != nil {
 			return err
 		}
 		return db.ErrUserAlreadyExists
 	}
-	u := db.User(*user)
-	if err := us.userStore.CreateUser(ctx, &u); err != nil {
+	if err := us.userStore.CreateUser(ctx, user); err != nil {
 		return err
 	}
 	return nil
+}
+
+func (svc *UserService) GetUser(ctx context.Context, id uuid.UUID) (*types.User, error) {
+	u, err := svc.userStore.GetUser(ctx, id)
+	return u, err
+}
+func (svc *UserService) GetUserByName(ctx context.Context, username string) (*types.User, error) {
+	u, err := svc.userStore.GetUserByName(ctx, username)
+	return u, err
 }
 
 func (svc *UserService) Close() error {

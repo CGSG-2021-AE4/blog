@@ -31,39 +31,46 @@ div.padding {
 
 
 body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--body-bg-color);
+}
+div#body {
   margin-block: 0;
   margin-inline: auto;
-  padding-block: 2em;
-  padding-inline: 2em;
+
+  padding: 0;
+
   max-width: var(--body-width);
+  min-height: 100%;
+
   display: flex;
   flex-direction: column;
   
   background-color: var(--body-bg-color);
 }
+div#app {
+  margin-block: 2em;
+  margin-inline: 2em;
 
-
-header {
+  flex: 1;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  
-  margin: 1em;
-  margin-bottom: var(--vertical-gap);
-
+  flex-direction: column;
 }
 
-footer {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  margin-top: var(--vertical-gap);
-  margin-inline: 4em;
+input[type=text] {
+  background-color: transparent;
+  border: 1px solid var(--main-color);
+  border-radius: 0.4em;
 }
 
 img#logo {
   height: var(--header-height)
+}
+
+input[type=button], input[type=submit] {
+  background-color: transparent;
+  border: 2px solid var(--main-color);
+  border-radius: 0.4em;
+  color: var(--main-color)
 }

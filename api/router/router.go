@@ -1,6 +1,10 @@
 package router
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-gonic/gin"
+)
 
 type Route struct {
 	Method  string
@@ -30,4 +34,17 @@ func (rs Routers) Routes() []Route {
 		outRs = append(outRs, r.Routes()...)
 	}
 	return outRs
+}
+
+type ErrorResp struct {
+	Err string `json:"err"`
+}
+
+func ScriptPageHandler(script string) gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		ctx.HTML(http.StatusOK, "index.html", gin.H{
+			"Title":  "AE4 blog",
+			"Script": script,
+		})
+	}
 }

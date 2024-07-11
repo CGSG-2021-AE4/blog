@@ -44,7 +44,7 @@ func (s *ApiServer) Start(ctx context.Context) error {
 	// Load static files and templates
 	rt.Delims("{", "}")
 	rt.Static("bin/", "./web/bin")
-	rt.LoadHTMLFiles("./web/templates/main.html")
+	rt.LoadHTMLFiles("./web/templates/index.html")
 
 	for _, f := range s.Midleware {
 		rt.Use(f)
@@ -71,7 +71,11 @@ func (s *ApiServer) Start(ctx context.Context) error {
 		}
 	}()
 
-	if err := s.httpServer.ListenAndServeTLS(s.CertFilename, s.PrivKeyFilename); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	// if err := s.httpServer.ListenAndServeTLS(s.CertFilename, s.PrivKeyFilename); err != nil && !errors.Is(err, http.ErrServerClosed) {
+	// 	return err
+	// }
+	// Without https
+	if err := s.httpServer.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return err
 	}
 	return nil

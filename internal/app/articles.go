@@ -1,23 +1,24 @@
 package app
 
-import "github.com/CGSG-2021-AE4/blog/api"
+import (
+	"context"
+
+	"github.com/CGSG-2021-AE4/blog/internal/db"
+	"github.com/CGSG-2021-AE4/blog/internal/types"
+)
 
 type ArticlesService struct {
-	Domain string
+	artsStore db.ArticleStore
 }
 
-func NewArticlesService(domain string) *ArticlesService {
+func NewArticlesService(artsStore db.ArticleStore) *ArticlesService {
 	return &ArticlesService{
-		Domain: domain,
+		artsStore: artsStore,
 	}
 }
 
-func (svc *ArticlesService) ListArticles() []api.Article {
-	return []api.Article{
-		{Title: "First", Context: nil},
-		{Title: "Second", Context: nil},
-		{Title: "Third", Context: nil},
-	}
+func (svc *ArticlesService) ListArticles(ctx context.Context, limit int) ([]types.ArticleHeader, error) {
+	return svc.artsStore.ListHeaders(ctx, limit)
 }
 
 func (svc *ArticlesService) Close() error {

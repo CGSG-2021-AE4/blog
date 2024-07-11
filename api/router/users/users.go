@@ -19,7 +19,11 @@ func NewRouter(userSvc api.UserService) router.Router {
 
 func (ar *UsersRouter) Routes() []router.Route {
 	return []router.Route{
+		{Method: http.MethodGet, Path: "/login", Handler: router.ScriptPageHandler("login")},
+		{Method: http.MethodGet, Path: "/account", Handler: router.ScriptPageHandler("account")},
+
 		{Method: http.MethodPost, Path: "/login", Handler: loginHandler(ar.userSvc)},
 		{Method: http.MethodPost, Path: "/reg", Handler: registerHandler(ar.userSvc)},
+		{Method: http.MethodPost, Path: "/getUser", Handler: getUserInfoHandler(ar.userSvc)},
 	}
 }

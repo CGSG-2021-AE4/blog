@@ -6,8 +6,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/CGSG-2021-AE4/blog/api"
 	"github.com/CGSG-2021-AE4/blog/internal/db"
+	"github.com/CGSG-2021-AE4/blog/internal/types"
 
 	"github.com/google/uuid"
 )
@@ -16,13 +16,13 @@ type ArticleStore struct {
 	filename string
 
 	mutex    sync.Mutex
-	articles map[uuid.UUID]*db.Article
+	articles map[uuid.UUID]*types.Article
 }
 
 func NewArticleStore(filename string) (*ArticleStore, error) {
 	as := ArticleStore{
 		filename: filename,
-		articles: make(map[uuid.UUID]*db.Article),
+		articles: make(map[uuid.UUID]*types.Article),
 	}
 	if err := as.load(); err != nil {
 		return nil, err
@@ -38,12 +38,12 @@ func (as *ArticleStore) load() error {
 	if err != nil {
 		return err
 	}
-	articles := []db.ArticleJson{}
+	articles := []types.ArticleJson{}
 	if err := json.Unmarshal(bytes, &articles); err != nil {
 		return nil
 	}
 	for _, u := range articles { // Check if this is memory friendly
-		as.articles[u.Id] = &db.Article{
+		as.articles[u.Id] = &types.Article{
 			Header:  u.ArticleHeader,
 			Content: &u.ArticleContent,
 		}
@@ -55,9 +55,9 @@ func (as *ArticleStore) save() error {
 	as.mutex.Lock()
 	defer as.mutex.Unlock()
 
-	articles := []db.ArticleJson{}
+	articles := []types.ArticleJson{}
 	for _, a := range as.articles {
-		articles = append(articles, db.ArticleJson{ArticleHeader: a.Header, ArticleContent: *a.Content})
+		articles = append(articles, types.ArticleJson{ArticleHeader: a.Header, ArticleContent: *a.Content})
 	}
 	bytes, err := json.Marshal(articles)
 	if err != nil {
@@ -66,10 +66,16 @@ func (as *ArticleStore) save() error {
 	return os.WriteFile(as.filename, bytes, 0777)
 }
 
-func (as *ArticleStore) ListHeaders(ctx context.Context, limit int) ([]db.ArticleHeader, error) {
-	return nil, api.ErrNotImplementedYet
+func (as *ArticleStore) ListHeaders(ctx context.Context, limit int) ([]types.ArticleHeader, error) {
+	headers := []types.ArticleHeader{}
+
+	for _, a := range as.articles { //
+		headers = append(headers, a.Header)
+	}
+	return headers, nil
 }
-func (as *ArticleStore) GetArticle(ctx context.Context, Id uuid.UUID) (*db.Article, error) {
+
+func (as *ArticleStore) GetArticle(ctx context.Context, Id uuid.UUID) (*types.Article, error) {
 	as.mutex.Lock()
 	defer as.mutex.Unlock()
 
@@ -79,7 +85,7 @@ func (as *ArticleStore) GetArticle(ctx context.Context, Id uuid.UUID) (*db.Artic
 	return nil, db.ErrArticleNotFound
 }
 
-func (as *ArticleStore) CreateArticle(ctx context.Context, a *db.Article) error {
+func (as *ArticleStore) CreateArticle(ctx context.Context, a *types.Article) error {
 	as.mutex.Lock()
 	defer as.mutex.Unlock()
 
@@ -90,6 +96,7 @@ func (as *ArticleStore) CreateArticle(ctx context.Context, a *db.Article) error 
 	as.articles[a.Header.Id] = a
 	return nil
 }
+
 func (as *ArticleStore) DeleteArticle(ctx context.Context, Id uuid.UUID) error {
 	as.mutex.Lock()
 	defer as.mutex.Unlock()
@@ -101,6 +108,7 @@ func (as *ArticleStore) DeleteArticle(ctx context.Context, Id uuid.UUID) error {
 	delete(as.articles, Id)
 	return nil
 }
+
 func (as *ArticleStore) Close() error {
 	return as.save()
 }

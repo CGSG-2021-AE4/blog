@@ -10,29 +10,31 @@ import (
 
 func AuthHandler(us api.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.Set("authorized", false)
+		c.Set("authorized", "false")
+		c.Set("authErr", "")
 
 		authStr := c.GetHeader("Authorization")
-		//log.Println("MIDLEWARE: ", authStr)
+		if authStr == "" {
+			c.Set("authErr", "no 'Authorization' header")
+			return
+		}
 		strs := strings.Split(authStr, " ")
 		if len(strs) != 2 {
-			// log.Println("AUTH ERROR: invalid auth str")
 			c.Set("authErr", "invalid auth str")
 			return
 		}
 		if strs[0] != "Bearer" {
-			//log.Println("AUTH ERROR: invalid auth method")
 			c.Set("authErr", "invalid auth method")
 			return
 		}
 
 		claims, err := us.ValidateToken(c, api.Token(strs[1]))
 		if err != nil {
-			// log.Println("AUTH ERROR:", err.Error())
 			c.Set("authErr", err.Error())
 			return
 		}
-		c.Set("authorized", true)
+
+		c.Set("authorized", "true")
 		c.Set("username", claims.Issuer)
 	}
 }

@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"github.com/CGSG-2021-AE4/blog/api"
+	"github.com/CGSG-2021-AE4/blog/api/router"
+	"github.com/CGSG-2021-AE4/blog/internal/types"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -27,15 +29,16 @@ func loginHandler(us api.UserService) gin.HandlerFunc {
 		log.Println("TRY LOGIN")
 		var info UserLoginReq
 		if err := json.NewDecoder(c.Request.Body).Decode(&info); err != nil {
-			c.JSON(http.StatusBadRequest, UserLoginResp{Msg: fmt.Errorf("failed to parse json: %w", err).Error()})
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: fmt.Errorf("failed to parse json: %w", err).Error()})
 			return
 		}
 		token, err := us.Login(c, info.Username, info.Password)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, UserLoginResp{Msg: fmt.Errorf("failed to login: %w", err).Error()})
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: fmt.Errorf("failed to login: %w", err).Error()})
 			return
 		}
 		c.JSON(http.StatusOK, UserLoginResp{Token: string(token), Msg: "Authorization complete"})
+		log.Println("LOGIN COMPLETE")
 	}
 }
 
@@ -55,20 +58,46 @@ func registerHandler(us api.UserService) gin.HandlerFunc {
 		log.Println("TRY REGISTER")
 		var info UserRegReq
 		if err := json.NewDecoder(c.Request.Body).Decode(&info); err != nil {
-			c.JSON(http.StatusBadRequest, UserRegResp{Msg: fmt.Errorf("failed to parse json: %w", err).Error()})
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: fmt.Errorf("failed to parse json: %w", err).Error()})
 			return
 		}
 		log.Println("Info", info)
-		user := api.User{
+		user := types.User{
 			Id:       uuid.New(),
 			Email:    info.Email,
 			Username: info.Username,
 			Password: info.Password,
 		}
 		if err := us.Register(c, &user); err != nil {
-			c.JSON(http.StatusBadRequest, UserRegResp{Msg: fmt.Errorf("registration error: %w", err).Error()})
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: fmt.Errorf("registration error: %w", err).Error()})
 			return
 		}
 		c.JSON(http.StatusOK, UserRegResp{Msg: "Registration complete"})
+	}
+}
+
+type getAccountInfoReq struct {
+	Username string `json:"username"`
+}
+
+func getUserInfoHandler(us api.UserService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		log.Println("GET account info")
+		if c.Keys["authorized"] != "true" {
+			log.Println("Not authorized error", c.Keys["authErr"])
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: "not authorized"})
+			return
+		}
+		var info getAccountInfoReq
+		if err := json.NewDecoder(c.Request.Body).Decode(&info); err != nil {
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: err.Error()})
+			return
+		}
+		u, err := us.GetUserByName(c, info.Username)
+		if err != nil {
+			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: err.Error()})
+			return
+		}
+		c.JSON(http.StatusOK, u)
 	}
 }

@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/CGSG-2021-AE4/blog/api"
+	"github.com/CGSG-2021-AE4/blog/internal/types"
 
 	"github.com/google/uuid"
 )
@@ -15,21 +16,14 @@ const (
 	ErrUserAlreadyExists = api.Error("user already exists")
 )
 
-type User struct {
-	Id       uuid.UUID `json:"id"`
-	Email    string    `json:"email"`
-	Username string    `json:"username"`
-	Password string    `json:"password"`
-}
-
 type UserStoreReader interface {
-	GetUser(ctx context.Context, id uuid.UUID) (*User, error)
-	GetUserByName(ctx context.Context, username string) (*User, error)
+	GetUser(ctx context.Context, id uuid.UUID) (*types.User, error)
+	GetUserByName(ctx context.Context, username string) (*types.User, error)
 	DoExist(ctx context.Context, username string) (bool, error) // Is needed for registration
 }
 
 type UserStoreWriter interface {
-	CreateUser(ctx context.Context, user *User) error
+	CreateUser(ctx context.Context, user *types.User) error
 	DeleteUser(ctx context.Context, Id uuid.UUID) error
 }
 

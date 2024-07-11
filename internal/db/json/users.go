@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/CGSG-2021-AE4/blog/internal/db"
+	"github.com/CGSG-2021-AE4/blog/internal/types"
 
 	"github.com/google/uuid"
 )
@@ -15,11 +16,11 @@ type UserStore struct {
 	filename string
 
 	mutex sync.Mutex
-	users map[uuid.UUID]*db.User
+	users map[uuid.UUID]*types.User
 }
 
 func NewUserStore(filename string) (*UserStore, error) {
-	us := UserStore{filename: filename, users: make(map[uuid.UUID]*db.User)}
+	us := UserStore{filename: filename, users: make(map[uuid.UUID]*types.User)}
 	if err := us.load(); err != nil {
 		return nil, err
 	}
@@ -34,7 +35,7 @@ func (us *UserStore) load() error {
 	if err != nil {
 		return err
 	}
-	users := []db.User{}
+	users := []types.User{}
 	if err := json.Unmarshal(bytes, &users); err != nil {
 		return nil
 	}
@@ -48,7 +49,7 @@ func (us *UserStore) save() error {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 
-	users := []db.User{}
+	users := []types.User{}
 	for _, u := range us.users {
 		users = append(users, *u)
 	}
@@ -59,7 +60,7 @@ func (us *UserStore) save() error {
 	return os.WriteFile(us.filename, bytes, 0777)
 }
 
-func (us *UserStore) GetUser(ctx context.Context, id uuid.UUID) (*db.User, error) {
+func (us *UserStore) GetUser(ctx context.Context, id uuid.UUID) (*types.User, error) {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 
@@ -77,7 +78,7 @@ func (us *UserStore) DoExist(ctx context.Context, username string) (bool, error)
 	return true, nil
 }
 
-func (us *UserStore) GetUserByName(ctx context.Context, username string) (*db.User, error) {
+func (us *UserStore) GetUserByName(ctx context.Context, username string) (*types.User, error) {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 
@@ -89,7 +90,7 @@ func (us *UserStore) GetUserByName(ctx context.Context, username string) (*db.Us
 	return nil, db.ErrUserNotExists
 }
 
-func (us *UserStore) CreateUser(ctx context.Context, user *db.User) error {
+func (us *UserStore) CreateUser(ctx context.Context, user *types.User) error {
 	us.mutex.Lock()
 	defer us.mutex.Unlock()
 

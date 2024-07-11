@@ -48,11 +48,11 @@ func mainRun(ctx context.Context, conf Config) error {
 	}
 
 	// Create services
-	articlesSvc := app.NewArticlesService(conf.Domain)
+	articlesSvc := app.NewArticlesService(articleStore)
 	userSvc := app.NewUserService(conf.UserSvcSecret, time.Duration(conf.UserTokenExpTimeout), userStore)
 
 	routers := router.Routers{Rs: []router.Router{
-		articles.NewRouter(conf.Domain, articlesSvc, userSvc),
+		articles.NewRouter(articlesSvc, userSvc),
 		users.NewRouter(userSvc),
 	}}
 
