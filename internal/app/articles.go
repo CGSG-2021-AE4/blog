@@ -24,19 +24,19 @@ func (svc *ArticlesService) ListArticles(ctx context.Context, limit int) ([]type
 }
 
 func (svc *ArticlesService) GetArticle(ctx context.Context, id uuid.UUID) (*types.Article, error) {
-	return nil, api.ErrNotImplementedYet
+	return svc.artsStore.GetArticle(ctx, id)
 }
 
 func (svc *ArticlesService) CreateArticle(ctx context.Context, a *types.Article) error {
-
+	return svc.artsStore.CreateArticle(ctx, a)
 }
 
 func (svc *ArticlesService) DeleteArticle(ctx context.Context, id uuid.UUID) error {
-
+	return svc.artsStore.DeleteArticle(ctx, id)
 }
 
 func (svc *ArticlesService) EditArticle(ctx context.Context, a *types.Article) error {
-
+	return api.ErrNotImplementedYet
 }
 
 func (svc *ArticlesService) Close() error {

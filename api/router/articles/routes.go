@@ -1,11 +1,13 @@
 package articles
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
 	"github.com/CGSG-2021-AE4/blog/api"
 	"github.com/CGSG-2021-AE4/blog/api/router"
+	"github.com/CGSG-2021-AE4/blog/internal/types"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -29,11 +31,12 @@ func listArticlesHandler(as api.ArticlesService) gin.HandlerFunc {
 func getArticleHandler(as api.ArticlesService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idStr := c.Request.URL.Query().Get("id")
+		log.Println(idStr)
 		if idStr == "" {
 			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: "no id presented"})
 			return
 		}
-		id, err := uuid.FromBytes([]byte(idStr))
+		id, err := uuid.Parse(idStr)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: err.Error()})
 			return
@@ -43,6 +46,8 @@ func getArticleHandler(as api.ArticlesService) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, a)
+		aJson := types.ArticleJson{ArticleHeader: a.Header, ArticleContent: *a.Content}
+		log.Println(aJson)
+		c.JSON(http.StatusOK, aJson)
 	}
 }
