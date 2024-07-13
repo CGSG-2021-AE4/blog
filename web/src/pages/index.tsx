@@ -4,35 +4,39 @@ import Header from "../components/header";
 import Footer from "../components/footer";
 import { useEffect } from "react";
 import * as Notifications from "../components/notification";
-
-class articleHeader {
-  id: string
-	title: string
-}
-
-class article {
-  id: string
-	title: string
-  text: string
-}
-
-const rowDivStyle = {
-  
-} as React.CSSProperties
+import { articleHeader } from "../types";
 
 function ArticleTitle( props: {a: articleHeader} ) {
   return (<>
-    <div style={{
+    <div className="board" style={{
       display: "flex",
       flexDirection: "row",
       justifyContent: "space-between",
-        
-      padding: "1.5em",
-      border: "1px solid var(--main-color)",
-      borderRadius: "1em",
+      marginBlock: "1em",
     }}>
-      <div>Title: {props.a.title}</div>
-      <a href={"/article?id=" + props.a.id}>Read</a>
+      <div style={{
+        flex: 1,
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        paddingInline: "1em",
+      }}><h2>{props.a.title}</h2></div>
+      <div style={{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        paddingInline: "1em",
+      }}><h3>{props.a.authorUsername}</h3></div>
+      <div style={{
+        margin: "0.3em",
+        display: "flex",
+        alignItems: "center",
+        flexDirection: "row",
+        borderTopRightRadius: "0.7em",
+        borderBottomRightRadius: "0.7em",
+        backgroundColor: "var(--light-shadow-color)",
+        paddingInline: "1em",
+      }}><a href={window.location.origin + "/article?id=" + props.a.id}>Read</a></div>
     </div>
   </>);
 }
@@ -42,7 +46,7 @@ function Articles() {
 
   useEffect(()=>{
     let fetchArticles = async () => {
-      let resp = await fetch("/api/article/list");
+      let resp = await fetch(window.location.origin + "/api/article/list");
       let res = await resp.json();
       if (res.err != undefined) {
         // Got error
@@ -55,17 +59,18 @@ function Articles() {
     fetchArticles();
   }, [])
   
-  return (<>
-    <div style={{flex: 1}}>
-      {articles.map(a=>(<ArticleTitle a={a}/>))}
-    </div>
-  </>);
+  return (<>{articles.map(a=>(<ArticleTitle a={a}/>))}</>);
 }
 
 function Application() {
   return (<>
     <Header/>
-      <Articles />
+      <div style={{
+        width: "60%",
+        alignSelf: "center",
+      }}>
+        <Articles />
+      </div>
     <Footer/>
   </>);
 }

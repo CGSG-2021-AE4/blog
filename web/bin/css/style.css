@@ -1,7 +1,9 @@
 @import url("./colors.css");
 
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
+
 :root {
-  font-family: "Roboto Mono", "Roboto Mono", "Vazirmatn", monospace;
+  font-family: "JetBrains Mono", monospace;
   --header-height: 3em;
   --body-width: 60em;
   --vertical-gap: 3.5em;
@@ -42,7 +44,7 @@ div#body {
 
   padding: 0;
 
-  max-width: var(--body-width);
+  max-width: 100%;
   min-height: 100%;
 
   display: flex;
@@ -52,12 +54,12 @@ div#body {
 }
 
 div#app {
-  margin-block: 2em;
-  margin-inline: 2em;
-
+  
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-image: url(../imgs/CGSG-Logo-gray.png);
+  background-size: 10em;
 }
 
 div#notificationBox {
@@ -90,4 +92,32 @@ input[type=button], input[type=submit] {
   border: 2px solid var(--main-color);
   border-radius: 0.4em;
   color: var(--main-color)
+}
+
+.board {
+  background-color: var(--bg-color);
+  border-radius: 1em;
+  box-shadow: 0 0.25em 1em var(--shadow-color);
+}
+
+.shadow {
+  background-color: #00000033;
+}
+
+.headerButton {
+  background-color: var(--light-shadow-color);
+  flex: 1;
+  margin-block: 0.3em;
+  margin-inline: 0.15em;
+  border-radius: 0.7em;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+hr {
+  border: none;
+  border-top: 0.3em double var(--main-color);
+  color: var(--main-color);
 }

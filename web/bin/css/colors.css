@@ -2,6 +2,8 @@
   --bg-color: rgb(56, 60, 89);
   --main-color: rgb(200, 234, 255);
   --hightlight-color: rgb(79, 214, 101);
+  --shadow-color:#00000066;
+  --light-shadow-color:#00000033;
 
   --body-bg-color: var(--bg-color);
 }

@@ -56,8 +56,16 @@ function Article() {
 
   return (<>
     <div style={{flex: 1, margin: "1em"}}>
-      <h1>{header.title}</h1>
-      <p>Author: {header.authorUsername}</p>
+      <div style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginBottom: "1em",
+      }}>
+        <h1 style={{flex: 1, margin: 0}}>{header.title}</h1>
+        <a href={window.location.origin + "user?id" + header.authorId}><h3>{header.authorUsername}</h3></a>
+      </div>
+      <hr/>
       <div id="articleContent"></div>
       {editButton}
     </div>
@@ -67,7 +75,12 @@ function Article() {
 function Application() {
   return (<>
     <Header/>
-      <Article />
+      <div className="board" style={{
+        width: "60%",
+        alignSelf: "center",
+      }}>
+        <Article />
+      </div>
     <Footer/>
   </>);
 }
