@@ -46,9 +46,10 @@ func mainRun(ctx context.Context, conf Config) error {
 	if err != nil {
 		return err
 	}
+	contentStore := json.NewContentStore(conf.ArticleContentDir)
 
 	// Create services
-	articlesSvc := app.NewArticlesService(articleStore)
+	articlesSvc := app.NewArticlesService(articleStore, contentStore)
 	userSvc := app.NewUserService(conf.UserSvcSecret, time.Duration(conf.UserTokenExpTimeout), userStore)
 
 	routers := router.Routers{Rs: []router.Router{

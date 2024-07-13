@@ -73,6 +73,14 @@ input[type=text] {
   border-radius: 0.4em;
 }
 
+textarea {
+  background-color: transparent;
+  border: 1px solid var(--main-color);
+  border-radius: 0.4em;
+  flex: 1;
+  overflow: scroll;
+}
+
 img#logo {
   height: var(--header-height)
 }

@@ -5,6 +5,7 @@ go 1.22.5
 require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/gomarkdown/markdown v0.0.0-20240626202925-2eda941fd024
 	github.com/google/uuid v1.6.0
 )
 

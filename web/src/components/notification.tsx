@@ -26,6 +26,7 @@ class NBox extends React.Component<{}, NBoxState> {
   }
 
   push( n: notification ) {
+    console.log("NOTIFICATION: " + n.type + " : " + n.msg)
     this.state.ns.push(n)
     this.setState({ ns: this.state.ns } )
     setTimeout(() => {

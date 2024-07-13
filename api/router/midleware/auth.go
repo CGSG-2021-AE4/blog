@@ -35,6 +35,6 @@ func AuthHandler(us api.UserService) gin.HandlerFunc {
 		}
 
 		c.Set("authorized", "true")
-		c.Set("username", claims.Issuer)
+		c.Set("authId", claims.Issuer)
 	}
 }

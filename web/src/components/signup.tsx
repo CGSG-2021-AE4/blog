@@ -25,7 +25,7 @@ async function HandleSubmit(e) {
     Notifications.Push({type: "error", msg: "Error: passwords do not match"})
   }
   
-  const resp = await fetch("/api/user/reg", {
+  const resp = await fetch(window.location.origin + "/api/user/reg", {
     method: "POST",
     body: JSON.stringify({
       username: username,
@@ -60,7 +60,7 @@ export default function LoginForm() {
       padding: "1.5em",
       border: "1px solid var(--main-color)",
       borderRadius: "1em",
-      minWidth: "20em",
+      minWidth: "22em",
     }}>
       <div style={labelDivStyle}>
         <label htmlFor="username">Username:</label><input id="username" name="username" type="text"/>

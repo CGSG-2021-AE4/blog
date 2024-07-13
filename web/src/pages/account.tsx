@@ -53,7 +53,7 @@ function AccountInfo() {
   let [user, setUser] = useState<UserInfo>({} as UserInfo)
 
   useEffect(() => {
-    fetch("/api/user/get", {
+    fetch(window.location.origin + "/api/user/getPrivate", {
       method: "POST",
       headers: {
         "Authorization": "Bearer " + Auth.GetToken()
@@ -66,6 +66,8 @@ function AccountInfo() {
     .then(u => {
       if (u.err != undefined) {
         // Got error
+        // Later will check the error but most times it means the token is expired
+        Auth.Logout()
         window.location.href = "/login"
         return
       }

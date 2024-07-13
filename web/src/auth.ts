@@ -1,7 +1,8 @@
 
-export function Login( username: string, token: string ) {
+export function Login( id: string, username: string, token: string ) {
   localStorage.setItem("ae4blog-authorized", "true")
   localStorage.setItem("ae4blog-username", username)
+  localStorage.setItem("ae4blog-id", id)
   localStorage.setItem("ae4blog-token", token)
 }
 
@@ -9,6 +10,7 @@ export function Logout() {
   localStorage.setItem("ae4blog-authorized", "false")
   localStorage.setItem("ae4blog-username", "")
   localStorage.setItem("ae4blog-token", "")
+  localStorage.setItem("ae4blog-id", "")
 }
 
 export function IsAuthorized(): boolean {
@@ -21,6 +23,14 @@ export function GetUsername(): string { // Maybe shorten later
     return ""
   }
   return u
+}
+
+export function GetId(): string { // Maybe shorten later
+  let id = localStorage.getItem("ae4blog-id")
+  if (id == null) {
+    return ""
+  }
+  return id
 }
 
 export function GetToken(): string {

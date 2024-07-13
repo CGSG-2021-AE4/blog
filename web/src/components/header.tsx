@@ -4,16 +4,16 @@ import * as Auth from "../auth";
 
 export default function Header() {
   let accountInfo = (
-    <a href="/login">
+    <a href={window.location.origin + "/login"}>
       <h3>Login</h3>
     </a>
   );
   if (Auth.IsAuthorized()) {
-    accountInfo = (
-      <a href="/account">
+    accountInfo = (<>
+      <a href={window.location.origin + "/account"}>
         <h3>{Auth.GetUsername()}</h3>
       </a>
-    );
+    </>);
   }
 
   return (<div style={{
@@ -26,7 +26,10 @@ export default function Header() {
     marginBottom: "var(--vertical-gap)",
   }}>
     <a href="/">
-      <img id="logo" src="bin/imgs/logo.svg"/>
+      <img id="logo" src={window.location.origin + "/bin/imgs/logo.svg"}/>
+    </a>
+    <a href={window.location.origin + "/article/create"}>
+        <h3>Create article</h3>
     </a>
     {accountInfo}
   </div>);

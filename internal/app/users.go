@@ -29,7 +29,7 @@ func NewUserService(tokenSecret string, tokenExpTimeout time.Duration, userStore
 func (us *UserService) encodeToken(claims api.TokenClaims) (api.Token, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"iss": claims.Issuer,
-		"exp": claims.ExpirationTime,
+		"exp": claims.ExpTime,
 	})
 	tokenStr, err := token.SignedString([]byte(us.tokenSecret))
 	if err != nil {
@@ -49,24 +49,28 @@ func (us *UserService) decodeToken(tokenStr api.Token) (api.TokenClaims, error) 
 		return api.TokenClaims{}, err
 	}
 	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		iss, err := uuid.Parse(claims["iss"].(string))
+		if err != nil {
+			return api.TokenClaims{}, err
+		}
 		return api.TokenClaims{
-			Issuer:         claims["iss"].(string),
-			ExpirationTime: int64(claims["exp"].(float64)),
+			Issuer:  iss,
+			ExpTime: int64(claims["exp"].(float64)),
 		}, nil
 	}
 	return api.TokenClaims{}, api.Error("claims decode error")
 }
 
-func (us *UserService) Login(ctx context.Context, username, password string) (api.Token, error) {
+func (us *UserService) Login(ctx context.Context, username, password string) (uuid.UUID, api.Token, error) {
 	user, err := us.userStore.GetUserByName(ctx, username)
 	if err != nil {
-		return "", err
+		return uuid.Nil, "", err
 	}
 	if user.Password != password {
-		return "", api.Error("wrong password")
+		return uuid.Nil, "", api.Error("wrong password")
 	}
-
-	return us.encodeToken(api.TokenClaims{Issuer: user.Username, ExpirationTime: time.Now().Local().Add(us.tokenExpTimeout).Unix()})
+	token, err := us.encodeToken(api.TokenClaims{Issuer: user.Id, ExpTime: time.Now().Local().Add(us.tokenExpTimeout).Unix()})
+	return user.Id, token, err
 }
 
 func (us *UserService) ValidateToken(ctx context.Context, token api.Token) (api.TokenClaims, error) {
@@ -76,7 +80,7 @@ func (us *UserService) ValidateToken(ctx context.Context, token api.Token) (api.
 	}
 
 	// Check exparation time
-	if time.Now().Local().Before(time.Unix(claims.ExpirationTime, 0)) {
+	if time.Now().Local().Before(time.Unix(claims.ExpTime, 0)) {
 		return claims, nil
 	}
 	return api.TokenClaims{}, api.Error("token expired")

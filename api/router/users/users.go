@@ -26,6 +26,7 @@ func (ar *UsersRouter) Routes() []router.Route {
 		{Method: http.MethodPost, Path: "/api/user/login", Handler: loginHandler(ar.userSvc)},
 		{Method: http.MethodPost, Path: "/api/user/reg", Handler: registerHandler(ar.userSvc)},
 		{Method: http.MethodPost, Path: "/api/user/delete", Handler: deleteHandler(ar.userSvc)},
-		{Method: http.MethodPost, Path: "/api/user/get", Handler: getUserInfoHandler(ar.userSvc)},
+		{Method: http.MethodPost, Path: "/api/user/getPrivate", Handler: getUserPrivateHandler(ar.userSvc)},
+		{Method: http.MethodPost, Path: "/api/user/getPublic", Handler: getUserPublicHandler(ar.userSvc)},
 	}
 }

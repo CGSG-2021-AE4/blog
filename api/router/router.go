@@ -40,9 +40,15 @@ type ErrorResp struct {
 	Err string `json:"err"`
 }
 
+type TextResp struct {
+	Text string `json:"text"`
+}
+
 func ScriptPageHandler(script string) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
-		ctx.HTML(http.StatusOK, "index.html", gin.H{
+	return func(c *gin.Context) {
+		origin := c.Request.Header.Get("Origin")
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"Origin": origin,
 			"Title":  "AE4 blog",
 			"Script": script,
 		})

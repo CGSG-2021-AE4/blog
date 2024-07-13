@@ -10,6 +10,7 @@ class loginReq {
 
 class loginResp {
   token: string;
+  id: string;
   msg: string;
 }
 
@@ -17,25 +18,25 @@ async function HandleSubmit(e) {
   e.preventDefault();
   let username = (document.getElementById("username")! as HTMLInputElement).value;
   let password = (document.getElementById("password")! as HTMLInputElement).value;
-  const resp = await fetch("/api/user/login", {
+
+  const resp = await fetch(window.location.origin + "/api/user/login", {
     method: "POST",
     body: JSON.stringify({username: username, password: password} as loginReq),
   });
+
   const res = await resp.json();
   if (res.err != undefined) {
     // Got error
     Notifications.Push({type: "error", msg: "Error: " + res.err});
-    (document.getElementById("username")! as HTMLInputElement).value = "";
-    (document.getElementById("password")! as HTMLInputElement).value = "";
     return;
   }
 
-  Auth.Login(username, res.token);
+  Auth.Login(res.id, username, res.token);
   Notifications.Push({type: "ok", msg: "Login complete"});
   (document.getElementById("username")! as HTMLInputElement).value = "";
   (document.getElementById("password")! as HTMLInputElement).value = "";
   setTimeout(() => {
-    window.location.href = "/"; // Redirect
+    window.location.href = window.location.origin; // Redirect
   }, 1000);
 }
 
@@ -66,7 +67,7 @@ export default function LoginForm() {
         marginTop: "2em",
         marginBottom: "0.5em",
       }} value="Login" />
-      <div style={{display: "flex", justifyContent: "center"}}><div><a href="/signup">Signup</a> for new users</div></div>
+      <div style={{display: "flex", justifyContent: "center"}}><div><a href={window.location.origin + "/signup"}>Signup</a> for new users</div></div>
     </form>
   );
 }

@@ -14,7 +14,11 @@ function buildPage(page) {
 }
 
 buildPage("index")
+
 buildPage("login")
 buildPage("signup")
 buildPage("account")
+
 buildPage("article")
+buildPage("article_edit")
+buildPage("article_create")

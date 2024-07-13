@@ -20,8 +20,9 @@ type UserLoginReq struct {
 }
 
 type UserLoginResp struct {
-	Token string `json:"token"`
-	Msg   string `json:"msg"`
+	Id    uuid.UUID `json:"id"`
+	Token api.Token `json:"token"`
+	Msg   string    `json:"msg"`
 }
 
 func loginHandler(us api.UserService) gin.HandlerFunc {
@@ -32,12 +33,12 @@ func loginHandler(us api.UserService) gin.HandlerFunc {
 			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: fmt.Errorf("failed to parse json: %w", err).Error()})
 			return
 		}
-		token, err := us.Login(c, info.Username, info.Password)
+		id, token, err := us.Login(c, info.Username, info.Password)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, router.ErrorResp{Err: fmt.Errorf("failed to login: %w", err).Error()})
 			return
 		}
-		c.JSON(http.StatusOK, UserLoginResp{Token: string(token), Msg: "Authorization complete"})
+		c.JSON(http.StatusOK, UserLoginResp{Id: id, Token: token, Msg: "Authorization complete"})
 		log.Println("LOGIN COMPLETE")
 	}
 }
@@ -80,7 +81,7 @@ type getAccountInfoReq struct {
 	Username string `json:"username"`
 }
 
-func getUserInfoHandler(us api.UserService) gin.HandlerFunc {
+func getUserPrivateHandler(us api.UserService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		log.Println("GET account info")
 		if c.Keys["authorized"] != "true" {
@@ -99,6 +100,13 @@ func getUserInfoHandler(us api.UserService) gin.HandlerFunc {
 			return
 		}
 		c.JSON(http.StatusOK, u)
+	}
+}
+
+func getUserPublicHandler(us api.UserService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		_ = us
+		c.JSON(http.StatusBadRequest, router.ErrorResp{Err: api.ErrNotImplementedYet.Error()})
 	}
 }
 

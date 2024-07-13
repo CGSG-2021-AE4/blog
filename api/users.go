@@ -9,13 +9,13 @@ import (
 )
 
 type TokenClaims struct {
-	Issuer         string // "iss"
-	ExpirationTime int64  // "exp"
+	Issuer  uuid.UUID // "iss" user id
+	ExpTime int64     // "exp"
 }
 type Token string
 
 type UserService interface {
-	Login(ctx context.Context, username, password string) (Token, error)
+	Login(ctx context.Context, username, password string) (uuid.UUID, Token, error)
 	Register(ctx context.Context, u *types.User) error
 	Delete(ctx context.Context, id uuid.UUID) error
 

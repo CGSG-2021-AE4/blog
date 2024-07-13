@@ -9,11 +9,14 @@ import (
 )
 
 type ArticlesService interface {
-	ListArticles(ctx context.Context, limit int) ([]types.ArticleHeader, error)
-	GetArticle(ctx context.Context, id uuid.UUID) (*types.Article, error)
-	CreateArticle(ctx context.Context, a *types.Article) error
+	ListArticles(ctx context.Context, limit int) ([]types.Article, error)
+	GetArticle(ctx context.Context, id uuid.UUID) (types.Article, error)
+	GetContent(ctx context.Context, id uuid.UUID) ([]byte, error)
+
+	CreateArticle(ctx context.Context, descr types.ArticleDescr) (uuid.UUID, error)
+	EditArticle(ctx context.Context, id uuid.UUID, descr types.ArticleDescr) error
+	EditContent(ctx context.Context, id uuid.UUID, content []byte) error
 	DeleteArticle(ctx context.Context, id uuid.UUID) error
-	EditArticle(ctx context.Context, a *types.Article) error
 
 	io.Closer
 }

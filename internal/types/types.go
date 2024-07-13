@@ -1,33 +1,36 @@
 package types
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 // Articles
-
-type ArticleContent struct {
-	Text string `json:"text"`
-}
-
-type ArticleHeader struct {
-	Id    uuid.UUID `json:"id"`
-	Title string    `json:"title"`
+type ArticleDescr struct {
+	Title          string    `json:"title"`
+	AuthorId       uuid.UUID `json:"authorId"`
+	AuthorUsername string    `json:"authorUsername"` // Made just for confort
 }
 
 type Article struct {
-	Header  ArticleHeader
-	Content *ArticleContent // Pointer it is supposed to be long
+	Id uuid.UUID `json:"id"`
+	ArticleDescr
+	Created   time.Time `json:"created"`
+	ContentId uuid.UUID `json:"contentId"`
 }
 
-type ArticleJson struct {
-	ArticleHeader
-	ArticleContent
-}
+var NilArticle Article
 
 // Users
 
 type User struct {
-	Id       uuid.UUID `json:"id"`
-	Email    string    `json:"email"`
-	Username string    `json:"username"`
-	Password string    `json:"password"`
+	Id    uuid.UUID `json:"id"`
+	Email string    `json:"email"`
+	// RegTime  time.Time `json:"regTime"`
+	// LastSeen time.Time `json:"lastSeen`
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
+
+var NilUser User

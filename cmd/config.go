@@ -16,6 +16,7 @@ type Config struct {
 	UserTokenExpTimeout int64  `json:"userTokenExpTimeout"`
 
 	ArticleStoreFilename string `json:"articleStoreFilename"`
+	ArticleContentDir    string `json:"ArticleContentDir"`
 }
 
 func NewConfigFromFlags() Config {
@@ -31,6 +32,7 @@ func NewConfigFromFlags() Config {
 	flag.Int64Var(&config.UserTokenExpTimeout, "token-exp-timeout", int64(3*time.Hour), "User token expiration timeout")
 
 	flag.StringVar(&config.ArticleStoreFilename, "articles-file", "out/article_store.json", "Article store json database filename")
+	flag.StringVar(&config.ArticleContentDir, "articles-content-dir", "out/db/articles/", "Article content files' dir")
 
 	flag.Parse()
 

@@ -3,40 +3,63 @@ import ReactDOM from "react-dom/client";
 import Header from "../components/header";
 import Footer from "../components/footer";
 import { useEffect } from "react";
+import * as Auth from "../auth";
 import * as Notifications from "../components/notification";
+import { articleHeader } from "../types";
 
-class article {
-  id: string
-	title: string
-  text: string
-}
-
-const rowDivStyle = {
-  
-} as React.CSSProperties
+let articleId: string = (new URLSearchParams(window.location.search)).get("id")!;
 
 function Article() {
-  let [article, setArticle] = useState<article>({} as article)
-
+  let [header, setHeader] = useState<articleHeader>({} as articleHeader);
+  let [editButton, setEditButton] = useState<React.JSX.Element>(<></>);
+  
   useEffect(()=>{
-    let fetchArticle = async () => {
-      let resp = await fetch("/api/article?id=" + (new URLSearchParams(window.location.search)).get("id"));
+    let fetchHeader = async () => {
+      let resp = await fetch(window.location.origin + "/api/article/header?id=" + articleId);
       let res = await resp.json();
       if (res.err != undefined) {
         // Got error
-        console.log(res.err)
+        Notifications.Push({type: "error", msg: "Error: " + res.err});
+        return;
+      }
+      setHeader(res);
+      console.log(res);
+    }
+    fetchHeader();
+  }, [])
+
+  useEffect(() => {
+    let fetchContent = async () => {
+      if (header.contentId == undefined) {
+        return;
+      }
+      let resp = await fetch(window.location.origin + "/api/article/contentHTML?id=" + header.contentId);
+      let res = await resp.json();
+      if (res.err != undefined) {
+        // Got error
+        Notifications.Push({type: "error", msg: "Error: " + res.err});
         return
       }
-      setArticle(res as article)
+      (document.getElementById("articleContent")!).innerHTML = res.text;
+      if (header.authorId == Auth.GetId()) {
+        setEditButton(<>
+          <div>
+            <input type="button" onClick={() => {
+              window.location.href = window.location.origin + "/article/edit?id=" + header.id;
+            }} value="Edit"/>
+          </div>
+        </>);
+      }
     }
+    fetchContent()
+  }, [header])
 
-    fetchArticle();
-  }, [])
-  
   return (<>
     <div style={{flex: 1, margin: "1em"}}>
-      <h1>{article.title}</h1>
-      <div>{article.text}</div>
+      <h1>{header.title}</h1>
+      <p>Author: {header.authorUsername}</p>
+      <div id="articleContent"></div>
+      {editButton}
     </div>
   </>);
 }
