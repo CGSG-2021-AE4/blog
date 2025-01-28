@@ -16,7 +16,7 @@ type UserStore struct {
 	filename string
 
 	mutex sync.Mutex
-	users map[uuid.UUID]*types.User
+	users map[uuid.UUID]*types.User // For quicker search
 }
 
 func NewUserStore(filename string) (*UserStore, error) {
@@ -88,6 +88,41 @@ func (us *UserStore) GetUserByName(ctx context.Context, username string) (*types
 		}
 	}
 	return nil, db.ErrUserNotExists
+}
+
+func UintMin(a, b uint) uint {
+	if a < b {
+		return a
+	}
+	return b
+}
+
+func UintMax(a, b uint) uint {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func (us *UserStore) List(ctx context.Context, shift, limit uint) ([]*types.User, error) {
+	us.mutex.Lock()
+	defer us.mutex.Unlock()
+
+	start := UintMin(shift, uint(len(us.users)))
+	end := UintMin(start+limit, uint(len(us.users)))
+
+	// Shit code
+	counter := uint(0)
+	outUsers := make([]*types.User, end-start)
+	for _, u := range us.users {
+		if counter >= end {
+			break
+		}
+		if counter >= start {
+			outUsers[counter-start] = u
+		}
+	}
+	return outUsers, nil
 }
 
 func (us *UserStore) CreateUser(ctx context.Context, user *types.User) error {

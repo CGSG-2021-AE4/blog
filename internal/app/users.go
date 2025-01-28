@@ -99,6 +99,22 @@ func (us *UserService) Register(ctx context.Context, user *types.User) error {
 	return nil
 }
 
+func (us *UserService) List(ctx context.Context, shift, limit uint) ([]api.UserPublic, error) {
+	users, err := us.userStore.List(ctx, shift, limit)
+	if err != nil {
+		return nil, err
+	}
+	// Shit casts
+	outUsers := make([]api.UserPublic, len(users))
+	for i, u := range users {
+		outUsers[i] = api.UserPublic{
+			Id:       u.Id,
+			Username: u.Username,
+		}
+	}
+	return outUsers, nil
+}
+
 func (svc *UserService) Delete(ctx context.Context, id uuid.UUID) error {
 	return svc.userStore.DeleteUser(ctx, id)
 }

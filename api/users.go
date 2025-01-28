@@ -14,10 +14,16 @@ type TokenClaims struct {
 }
 type Token string
 
+type UserPublic struct {
+	Id       uuid.UUID `json:"id"`
+	Username string    `json:"username"`
+}
+
 type UserService interface {
 	Login(ctx context.Context, username, password string) (uuid.UUID, Token, error)
 	Register(ctx context.Context, u *types.User) error
 	Delete(ctx context.Context, id uuid.UUID) error
+	List(ctx context.Context, shift, limit uint) ([]UserPublic, error)
 
 	ValidateToken(ctx context.Context, token Token) (TokenClaims, error)
 

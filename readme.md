@@ -72,7 +72,5 @@ go build -o ./out/blog.exe ./cmd/main.go
 #### Frontend
 node esbuild.js
 
-
-
 ### Potencial problems and TODOs
 Make ability to check if this username is valid
